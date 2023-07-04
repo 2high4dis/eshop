@@ -1,0 +1,202 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row align-items-start">
+    <div class="col-3 mb-2">
+        <div class="card">
+            <div class="container-fluid p-3">
+                <h3 class="cloud_font">Filter:</h3>
+                <form action="{% url 'catalog' current_page %}" method="get">
+                    <div class="mb-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" role="switch" {% if only_in_stock %} checked
+                                {% endif %} id="only_in_stock" name="only_in_stock" value="True">
+                            <label class="form-check-label" for="only_in_stock">Only in stock</label>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="brand" class="form-label">Brand:</label>
+                        <select class="form-select" aria-label="Brand" id="brand" name="brand">
+                            <option {% if not selected_brand %} selected {% endif %} value="">Brand</option>
+                            {% for brand in brands %}
+                            <option value="{{ brand.brand }}" {% if brand.brand == selected_brand %} selected
+                                {% endif %}>
+                                {{ brand }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="size" class="form-label">Size:</label>
+                        <select class="form-select" aria-label="Size" id="size" name="size">
+                            <option {% if not selected_size %} selected {% endif %} value="">Size</option>
+                            {% for size in sizes %}
+                            <option value="{{ size }}" {% if size == selected_size %} selected {% endif %}>
+                                {{ size }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="subcategory" class="form-label">Category:</label>
+                        <select class="form-select" aria-label="Category" id="subcategory" name="subcategory">
+                            <option {% if not selected_category %} selected {% endif %} value="">Category
+                            </option>
+                            {% for subcategory in subcategories %}
+                            <option value="{{ subcategory.subcategory_name }}"
+                                {% if subcategory.subcategory_name == selected_subcategory %} selected {% endif %}>
+                                {{ subcategory }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    {% if items_per_page %}
+                    <input type="hidden" name="items_per_page" value="{{ items_per_page }}">
+                    {% endif %}
+                    {% if sorting %}
+                    <input type="hidden" name="order-by" value="{{ sorting }}">
+                    {% endif %}
+                    {% if selected_category %}
+                    <input type="hidden" name="category" value="{{ selected_category }}">
+                    {% endif %}
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-9 mb-2">
+        <div class="card">
+            <div class="container-fluid p-3">
+                <div class="row">
+                    <div class="col-auto me-auto">
+                        <h3 class="cloud_font">
+                            {% if selected_category %}{{ selected_category }} {% endif %}{% if q %}Searh
+                            results for "{{ q }}"{% else %}Catalog{% endif %}:
+                        </h3>
+                    </div>
+                    <div class="col col-md-4 col-auto">
+                        <form action="{% url 'catalog' current_page %}" method="get">
+                            <div class="hstack gap-3">
+                                <div class="p-2 w-50">
+                                    <div class="form-floating">
+                                        <select class="form-select" name="order-by" id="order-by">
+                                            {% for key, value in sorting_variants.items %}
+                                            <option value="{{ key }}" {% if key == sorting %}selected{% endif %}>
+                                                {{ value }}
+                                            </option>
+                                            {% endfor %}
+                                        </select>
+                                        <label for="order-by">Order by</label>
+                                    </div>
+                                </div>
+                                <div class="p-2 w-50">
+                                    <div class="form-floating">
+                                        <select class="form-select" name="items_per_page" id="items_per_page">
+                                            {% for variant in items_per_page_variants %}
+                                            <option value="{{ variant }}"
+                                                {% if variant == items_per_page %}selected{% endif %}>
+                                                {{ variant }}
+                                            </option>
+                                            {% endfor %}
+                                        </select>
+                                        <label for="items_per_page">Items per page</label>
+                                    </div>
+                                </div>
+                                {% if selected_brand %}
+                                <input type="hidden" name="brand" value="{{ selected_brand }}">
+                                {% endif %}
+                                {% if selected_category %}
+                                <input type="hidden" name="category" value="{{ selected_category }}">
+                                {% endif %}
+                                {% if selected_size %}
+                                <input type="hidden" name="size" value="{{ selected_size }}">
+                                {% endif %}
+                                {% if selected_subcategory %}
+                                <input type="hidden" name="subcategory" value="{{ selected_subcategory }}">
+                                {% endif %}
+                                <div class="p-2">
+                                    <div class="text-start">
+                                        <button type="submit" class="btn btn-sm btn-outline-secondary">OK</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="container-fluid text-center">
+                    <div class="row row-cols-3">
+                        {% if products %}
+                        {% for product in products %}
+                        <div class="col {% if product.in_stock %}in_stock{% else %}not_in_stock{% endif %} mb-4"
+                            style="height: 24rem;">
+                            <div class="card h-100">
+                                <a href="{% url 'product_page' product.id %}"
+                                    class="link-dark link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover h-100">
+                                    <div
+                                        class="text-center d-flex align-items-center justify-content-center py-3 h-75 mx-auto">
+                                        {% if product.image %}
+                                        <img class="img-fluid" src="{{ MEDIA_URL }}{{ product.image.url }}" alt="s"
+                                            style="width: 12rem; height: 14rem;">
+                                        {% else %}
+                                        <span>NO PHOTO</span>
+                                        {% endif %}
+                                    </div>
+                                    <div class="card_body pb-3 h-25">
+                                        <div>
+                                            <b>{{ product.info }}</b>
+                                        </div>
+                                        <div>
+                                            <b>{{ product.price }}</b> $
+                                        </div>
+                                        <div>
+                                            {% if product.in_stock %}
+                                            In Stock ✔
+                                            {% else %}
+                                            Out of Stock ✘
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+
+                        {% endfor %}
+                        {% else %}
+                        <h4 class="cloud_font">No Products to display.</h4>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% if page_count %}
+            <div class="mx-auto">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination">
+                        <li class="page-item {% if current_page == 1 %}disabled{% endif %}"><a class="page-link"
+                                href="{% url 'catalog' current_page|add:"-1" %}?order-by={{ sorting }}&items_per_page={{ items_per_page }}&{% if selected_brand %}brand={{ selected_brand }}&{% endif %}{% if selected_size %}size={{ selected_size }}&{% endif %}{% if selected_subcategory %}subcategory={{ selected_subcategory }}&{% endif %}"
+                                {% if selected_category %}category={{ selected_category }}&{% endif %}>&laquo;</a>
+                        </li>
+                        {% for page in page_count %}
+                        <li class="page-item {% if current_page == page %}active{% endif %}">
+                            {% if current_page == page %}
+                            <span class="page-link">{{ page }}</span>
+                            {% else %}
+                            <a class="page-link"
+                                href="{% url 'catalog' page %}?order-by={{ sorting }}&items_per_page={{ items_per_page }}&{% if selected_brand %}brand={{ selected_brand }}&{% endif %}{% if selected_size %}size={{ selected_size }}&{% endif %}{% if selected_subcategory %}subcategory={{ selected_subcategory }}&{% endif %}{% if selected_category %}category={{ selected_category }}&{% endif %}">{{ page }}</a>
+                            {% endif %}
+                        </li>
+                        {% endfor %}
+                        <li class="page-item {% if current_page == max_page  %} disabled {% endif %}"><a
+                                class="page-link"
+                                href="{% url 'catalog' current_page|add:"1" %}?order-by={{ sorting }}&items_per_page={{ items_per_page }}&{% if selected_brand %}brand={{ selected_brand }}&{% endif %}{% if selected_size %}size={{ selected_size }}&{% endif %}{% if selected_subcategory %}subcategory={{ selected_subcategory }}&{% endif %}{% if selected_category %}category={{ selected_category }}&{% endif %}">&raquo;</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

@@ -1,0 +1,81 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Varela Round', sans-serif !important;
+    width: 100%;
+    background: white url("assets/background.png")no-repeat;
+    background-position: right -200% bottom 140%;
+    background-attachment: fixed;
+}
+
+nav.navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1000 !important;
+}
+
+.navbar, .cloud_font {
+    font-family: 'Rubik Bubbles', cursive;
+}
+
+div.in_stock div {
+    color: black;
+}
+
+div.not_in_stock div {
+    color: #616161;
+}
+
+div.not_in_stock img {
+    filter: grayscale(100%);
+}
+.colored {
+    background: white;
+    border: 1px solid rgba(0, 0, 0, 0.175);
+    border-radius: 0.375rem;
+}
+
+.carousel {
+    position: relative;
+    z-index: 100 !important;
+}
+
+.star {
+    color: #ffc107 !important;
+}
+
+.rate:not(:checked) > input {
+    position:absolute;
+    left:-9999px;
+}
+.rate:not(:checked) > label {
+    float:right;
+    width:1em;
+    overflow:hidden;
+    white-space:nowrap;
+    cursor:pointer;
+    font-size:24px;
+    color:#ccc;
+}
+.rate:not(:checked) > label:before {
+    content: '★ ';
+}
+.rate > input:checked ~ label {
+    color: #ffc107;    
+}
+.rate:not(:checked) > label:hover,
+.rate:not(:checked) > label:hover ~ label {
+    color: #ffc107;  
+}
+.rate > input:checked + label:hover,
+.rate > input:checked + label:hover ~ label,
+.rate > input:checked ~ label:hover,
+.rate > input:checked ~ label:hover ~ label,
+.rate > label:hover ~ input:checked ~ label {
+    color: #ffc107;
+}
+

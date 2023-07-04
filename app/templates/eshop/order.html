@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container-fluid colored p-3 mb-3" style="min-height: 30rem;">
+    <div class="mb-3">
+        <a href="{% url 'profile' %}" class="text-decoration-none link-dark">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                class="bi bi-arrow-left-short align-center" viewBox="0 0 16 16">
+                <path fill-rule="evenodd"
+                    d="M12 8a.5.5 0 0 1-.5.5H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5a.5.5 0 0 1 .5.5z" />
+            </svg>
+            Back to profile</a>
+        <h2 class="cloud_font">Order #{{ order.id }}:</h2>
+        <h3 class="cloud_font">Status: {{ order.status }}</h3>
+        <h3 class="cloud_font">Ship to:
+            {% if order.ship_to %}{{ order.ship_to.department }}{% else %}#{% endif %}
+        </h3>
+    </div>
+    {% for item in order.orderitem_set.all %}
+    <div class="card">
+        <div class="card-header">
+            <div class="row">
+                <div class="col text-start">
+                    <a href="{% url 'product_page' item.product.product.id %}"
+                        class="link-dark link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"><b>{{ item.product.product }}.
+                            Size
+                            {{ item.product.size }}</b></a>
+                </div>
+                <div class="col text-end">
+                    <b>{{ item.product.product.price }}$</b>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            {% if item.product.product.itemimage_set.all %}
+            {% for image in item.product.product.itemimage_set.all %}
+            <a data-bs-toggle="modal" data-bs-target="#itemimages{{ item.id }}_fs">
+                <img src="{{ MEDIA_URL }}{{ image.image.url }}" class="img-thumbnail" alt="..." style="width: 5rem;">
+            </a>
+            {% endfor %}
+            {% endif %}
+            {% if item.product.product.itemimage_set.all %}
+            <div class="modal fade" id="itemimages{{ item.id }}_fs" tabindex="-1"
+                aria-labelledby="itemimages{{ item.id }}_fsLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div id="item{{ item.id }}-photo-carousel"
+                                class="carousel carousel-dark slide carousel-fade">
+                                <div class="carousel-indicators">
+                                    {% for image in item.product.product.itemimage_set.all %}
+                                    <button type="button" data-bs-target="#item{{ item.id }}-photo-carousel"
+                                        data-bs-slide-to="{{ forloop.counter0 }}" {% if not forloop.counter0 %}
+                                        class="active" aria-current="true" {% endif %}
+                                        aria-label="Slide {{ forloop.counter }}"></button>
+                                    {% endfor %}
+                                </div>
+                                <div class="container">
+                                    <div class="carousel-inner">
+                                        {% for image in item.product.product.itemimage_set.all %}
+                                        <div class="carousel-item {% if image.default %}active{% endif %}">
+                                            <img src="{{ MEDIA_URL }}{{ image.image.url }}" class="d-block w-100"
+                                                alt="...">
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                    <button class="carousel-control-prev" type="button"
+                                        data-bs-target="#item{{ item.id }}-photo-carousel" data-bs-slide="prev">
+                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                        <span class="visually-hidden">Previous</span>
+                                    </button>
+                                    <button class="carousel-control-next" type="button"
+                                        data-bs-target="#item{{ item.id }}-photo-carousel" data-bs-slide="next">
+                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                        <span class="visually-hidden">Next</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+    <div class="text-end my-2">
+        <h3 class="cloud_font">Total: {{ order.total }}$</h3>
+    </div>
+    <div class="row mb-2">
+        <div class="col text-start">
+            {% if order.status == 'In cart' or order.status == 'Confirmed' %}
+            <a href="{% url 'delete_order' order.id %}" class="btn btn-outline-danger">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor"
+                    class="bi bi-trash-fill" viewBox="0 0 16 16">
+                    <path
+                        d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z" />
+                </svg>
+            </a>
+            {% endif %}
+        </div>
+        <div class="col text-end">
+            {% if order.status == 'In cart' %}
+            <a href="{% url 'shipping_info_choice' order.id %}" class="btn btn-lg btn-success">
+                <span class="cloud_font">
+                    Add shipping info
+                </span>
+            </a>
+            {% elif order.status == 'Confirmed' %}
+            <a href="{% url 'payment' order.id %}" class="btn btn-lg btn-success">
+                <span class="cloud_font">
+                    To Payment
+                </span>
+            </a>
+            {% elif order.status == 'Paid' %}
+            <a href="{% url 'send_order' order.id %}" class="btn btn-lg btn-success">
+                <span class="cloud_font">
+                    Send Order
+                </span>
+            </a>
+            {% elif order.status == 'Sent' %}
+            <a href="{% url 'complete_order' order.id %}" class="btn btn-lg btn-success">
+                <span class="cloud_font">
+                    Complete Order
+                </span>
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

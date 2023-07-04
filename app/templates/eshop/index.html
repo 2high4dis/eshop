@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container-fluid colored p-3 mb-3">
+    <h1 class="text-center cloud_font">2HIGH</h1>
+    <h2 class="cloud_font mx-2">Related products:</h2>
+    <div id="products_carousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+            {% for page in products_pgs %}
+            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                <div class="row row-cols-5 mx-5">
+                    {% for product in page %}
+                    <div class="col {% if product.in_stock %}in_stock{% else %}not_in_stock{% endif %} mb-4"
+                        style="height: 26rem;">
+                        <div class=" card h-100">
+                            <a href="{% url 'product_page' product.id %}"
+                                class="link-dark link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover h-100">
+                                <div
+                                    class="text-center d-flex align-items-center justify-content-center py-3 h-75 mx-auto">
+                                    {% if product.image %}
+                                    <img class="img-fluid" src="{{ MEDIA_URL }}{{ product.image.url }}" alt="s"
+                                        style="width: 12rem; height: 14rem;">
+                                    {% else %}
+                                    <span>NO PHOTO</span>
+                                    {% endif %}
+                                </div>
+                                <div class="card_body pb-3 text-center h-25">
+                                    <div>
+                                        <b>{{ product.info }}</b>
+                                    </div>
+                                    <div>
+                                        <b>{{ product.price }}</b> $
+                                    </div>
+                                    <div>
+                                        {% if product.in_stock %}
+                                        In Stock ✔
+                                        {% else %}
+                                        Out of Stock ✘
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#products_carousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#products_carousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+
+    <div class="cloud_font">
+        <h3>About us:</h3>
+        <p>
+            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Repudiandae soluta, nihil odio animi facere fugit
+            vero provident placeat temporibus magnam odit! Placeat animi assumenda itaque repellendus quasi consectetur
+            eum autem?
+        </p>
+        <h4>Delivery:</h4>
+        <p>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur quidem earum ab animi, officia
+            perspiciatis dolor quo explicabo dicta id consectetur odit. Explicabo dignissimos impedit veniam mollitia
+            earum corporis deserunt!
+        </p>
+        <h4>Payment</h4>
+        <p>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam ex accusantium voluptatum laborum earum
+            dicta quidem alias aliquid similique eos, nam sunt. Eveniet aspernatur impedit laboriosam sit ducimus
+            incidunt repellat!
+        </p>
+    </div>
+</div>
+
+{% endblock %}

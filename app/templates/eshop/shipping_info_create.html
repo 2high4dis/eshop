@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container-fluid colored p-3 mb-3" style="min-height: 32rem;">
+    <h3>New shipping info:</h3>
+    <form action="{% url 'create_shipping_info' %}" method="post">
+        {% csrf_token %}
+        <div class="form-floating mb-3">
+            <select name="city" id="city" class="form-select" required>
+                <option disabled {% if not selected_city %}selected{% endif %} value="">City</option>
+                {% for city in cities %}
+                <option value="{{ city.id }}" {% if selected_city == city.id %}selected{% endif %}>{{ city.city }}
+                </option>
+                {% endfor %}
+            </select>
+            <label for="city">
+                City:
+            </label>
+        </div>
+        <div class="form-floating mb-3">
+            <select name="shipping_company" id="shipping_company" class="form-select" required>
+                <option {% if not selected_company %}selected{% endif %} disabled value="">Shipping company</option>
+                {% for company in shipping_companies %}
+                <option value="{{ company.id }}" {% if selected_company == company.id %}selected{% endif %}>
+                    {{ company }}</option>
+                {% endfor %}
+            </select>
+            <label for="shipping_company">
+                Shipping company:
+            </label>
+        </div>
+        <div class="form-floating mb-3">
+            <select name="department" id="department" class="form-select" required>
+                <option {% if not selected_department %}selected{% endif %} disabled value="">Department</option>
+                {% for department in departments %}
+                <option value="{{ department.id }}" {% if selected_department == department.id %}selected{% endif %}>
+                    {{ department }}
+                </option>
+                {% endfor %}
+            </select>
+            <label for="department">
+                Department:
+            </label>
+        </div>
+        <div class="mb-3 text-end">
+            <button type="submit" class="btn btn-outline-primary">
+                <span class="cloud_font">
+                    Submit
+                </span>
+            </button>
+        </div>
+    </form>
+
+    <script type="text/javascript">
+        var link;
+        link = "{% url 'create_shipping_info' %}";
+
+        document.getElementById("city").onchange = function () {
+            if (this.selectedIndex !== 0) {
+                link = link + "?city=" + String(this.value) + "{% if selected_company %}&shipping_company={{ selected_company }}{% endif %}";
+                window.location.href = link;
+            }
+        };
+
+        document.getElementById("shipping_company").onchange = function () {
+            if (this.selectedIndex !== 0) {
+                link = link + "?shipping_company=" + String(this.value) + "{% if selected_city %}&city={{ selected_city }}{% endif %}";
+                window.location.href = link;
+            }
+        };
+        document.getElementById("department").onchange = function () {
+            if (this.selectedIndex !== 0) {
+                link = link + "?department=" + String(this.value);
+                window.location.href = link;
+            }
+        };
+    </script>
+</div>
+{% endblock %}

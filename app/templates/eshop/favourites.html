@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container-fluid colored p-3 mb-3" style="min-height: 30rem;">
+    <h2 class="cloud_font">Your favourites:</h2>
+    {% if favourites %}
+    {% for item in favourites %}
+    <div class="card">
+        <div class="card-header">
+            <div class="row">
+                <div class="col text-start">
+                    <a href="{% url 'product_page' item.product.id %}"
+                        class="link-dark link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">
+                        <b>{{ item.product }}</b>
+                    </a>
+                </div>
+                <div class="col text-end">
+                    <b>{{ item.product.price }}$</b>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col text-start">
+                    {% if item.product.itemimage_set.all %}
+                    {% for image in item.product.itemimage_set.all %}
+                    <a data-bs-toggle="modal" data-bs-target="#itemimages{{ item.id }}_fs">
+                        <img src="{{ MEDIA_URL }}{{ image.image.url }}" class="img-thumbnail" alt="..."
+                            style="width: 5rem;">
+                    </a>
+                    {% endfor %}
+                    {% endif %}
+                </div>
+                <div class="col text-end position-relative">
+                    <a href="{% url 'add_item_to_favourites' item.product.id %}"
+                        class="position-absolute top-50 end-0 translate-middle-y mx-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="#BF160A"
+                            class="bi bi-heart{% if item.product.in_favourites %}-fill{% endif %}" viewBox="0 0 16 16">
+                            {% if item.product.in_favourites %}
+                            <path fill-rule="evenodd"
+                                d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z" />
+                            {% else %}
+                            <path
+                                d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z" />
+                            {% endif %}
+                        </svg>
+                    </a>
+                </div>
+            </div>
+            {% if item.product.itemimage_set.all %}
+            <div class="modal fade" id="itemimages{{ item.id }}_fs" tabindex="-1"
+                aria-labelledby="itemimages{{ item.id }}_fsLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div id="item{{ item.id }}-photo-carousel"
+                                class="carousel carousel-dark slide carousel-fade">
+                                <div class="carousel-indicators">
+                                    {% for image in item.product.itemimage_set.all %}
+                                    <button type="button" data-bs-target="#item{{ item.id }}-photo-carousel"
+                                        data-bs-slide-to="{{ forloop.counter0 }}" {% if not forloop.counter0 %}
+                                        class="active" aria-current="true" {% endif %}
+                                        aria-label="Slide {{ forloop.counter }}"></button>
+                                    {% endfor %}
+                                </div>
+                                <div class="container">
+                                    <div class="carousel-inner">
+                                        {% for image in item.product.itemimage_set.all %}
+                                        <div class="carousel-item {% if image.default %}active{% endif %}">
+                                            <img src="{{ MEDIA_URL }}{{ image.image.url }}" class="d-block w-100"
+                                                alt="...">
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                    <button class="carousel-control-prev" type="button"
+                                        data-bs-target="#item{{ item.id }}-photo-carousel" data-bs-slide="prev">
+                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                        <span class="visually-hidden">Previous</span>
+                                    </button>
+                                    <button class="carousel-control-next" type="button"
+                                        data-bs-target="#item{{ item.id }}-photo-carousel" data-bs-slide="next">
+                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                        <span class="visually-hidden">Next</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+    {% else %}
+    <h4>Nothing to see here.</h4>
+    {% endif %}
+</div>
+
+{% endblock %}
