@@ -98,7 +98,7 @@ DATABASES = {
 
         'USER': 'leonid',
 
-        'PASSWORD': '12345678',
+        'PASSWORD': config('PASSWORD'),
 
     }
 
