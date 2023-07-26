@@ -34,6 +34,9 @@ def register(request: HttpRequest):
 
 @login_required
 def profile(request: HttpRequest):
+    context.update({
+        'orders': request.user.order_set.all().order_by('-pk')
+    })
     return render(request, template_name='registration/profile.html', context=context)
 
 

@@ -93,7 +93,7 @@
                                 </th>
                             </tr>
                         </thead>
-                        {% for order in user.order_set.all %}
+                        {% for order in orders %}
                         <tr
                             class="table-{% if order.status == 'New' %}secondary{% elif order.status == 'Confirmed' %}primary{% elif order.status == 'Paid' %}info{% elif order.status == 'Sent' %}warning{% elif order.status == 'Completed' %}success{% endif %}">
                             <td>
