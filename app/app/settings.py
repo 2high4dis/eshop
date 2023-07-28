@@ -96,7 +96,7 @@ DATABASES = {
 
         'NAME': 'eshopdb',
 
-        'USER': 'leonid',
+        'USER': config('USER'),
 
         'PASSWORD': config('PASSWORD'),
 
